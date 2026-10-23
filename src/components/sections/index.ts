@@ -1,0 +1,9 @@
+export { Hero } from "./hero";
+export { Features } from "./features";
+export { Stats } from "./stats";
+export { ServicesPreview } from "./services-preview";
+export { FeaturedProjects } from "./featured-projects";
+export { ProcessSteps } from "./process-steps";
+export { Testimonials } from "./testimonials";
+export { CTASection } from "./cta-section";
+export { StudioStatusSlider } from "./studio-status-slider";

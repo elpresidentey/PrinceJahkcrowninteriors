@@ -1,0 +1,380 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   Prince Jahknow Crown Interior Services — Regal Green & Gold system
+   Derived from the crest: warm cream canvas, deep emerald ink,
+   gold accents, hairline rules. Flat surfaces, near-zero radius,
+   generous negative space. Studio/architecture editorial, but
+   unmistakably royal.
+   ============================================================ */
+
+:root {
+  /* --- Surfaces & ink --- */
+  --background: #f7f2e3;          /* warm cream */
+  --foreground: #1c2b20;          /* deep forest ink */
+  --card: #fbf8ee;
+  --card-foreground: #1c2b20;
+  --popover: #fbf8ee;
+  --popover-foreground: #1c2b20;
+
+  /* --- Core --- */
+  --primary: #12482c;             /* emerald */
+  --primary-foreground: #f7f2e3;
+  --secondary: #ece4cd;           /* sand wash */
+  --secondary-foreground: #1c2b20;
+  --muted: #e7ddc4;
+  --muted-foreground: #6b6550;    /* warm olive-grey */
+  --accent: #e6d9ae;              /* soft gold panel */
+  --accent-foreground: #1c2b20;
+
+  --destructive: #9c3527;
+  --destructive-foreground: #f7f2e3;
+
+  --border: #ddd0ac;              /* gold-tinted hairline */
+  --input: #d6c8a0;
+  --ring: #12482c;
+
+  /* --- Brand neutrals --- */
+  --ivory: #f7f2e3;
+  --bone: #fbf8ee;
+  --greige: #e6d9ae;
+  --sand: #d8c79a;
+  --gold: #a8812a;                /* readable gold (text on cream) */
+  --gold-bright: #c9a233;         /* fills & highlights */
+  --clay: #a8812a;               /* legacy accent → gold */
+  --stone: #c7b98f;
+  --charcoal: #1c2b20;
+  --ink: #14231a;
+
+  --chart-1: #12482c;
+  --chart-2: #6b6550;
+  --chart-3: #a8812a;
+  --chart-4: #c7b98f;
+  --chart-5: #e6d9ae;
+
+  --sidebar: #f7f2e3;
+  --sidebar-foreground: #1c2b20;
+  --sidebar-primary: #12482c;
+  --sidebar-primary-foreground: #f7f2e3;
+  --sidebar-accent: #e6d9ae;
+  --sidebar-accent-foreground: #1c2b20;
+  --sidebar-border: #ddd0ac;
+  --sidebar-ring: #12482c;
+
+  --radius: 0px;
+}
+
+.dark {
+  --background: #102018;           /* deep forest night */
+  --foreground: #f1ecdb;           /* warm cream ink */
+  --card: #16281f;
+  --card-foreground: #f1ecdb;
+  --popover: #16281f;
+  --popover-foreground: #f1ecdb;
+
+  --primary: #c9a233;             /* gold */
+  --primary-foreground: #102018;
+  --secondary: #1a2e23;
+  --secondary-foreground: #f1ecdb;
+  --muted: #1e3327;
+  --muted-foreground: #a7a48c;
+  --accent: #24392c;
+  --accent-foreground: #f1ecdb;
+
+  --destructive: #c05a4a;
+  --destructive-foreground: #102018;
+
+  --border: #2b4433;
+  --input: #33503c;
+  --ring: #c9a233;
+
+  --ivory: #f1ecdb;
+  --bone: #16281f;
+  --greige: #24392c;
+  --sand: #33503c;
+  --gold: #c9a233;
+  --gold-bright: #dcbb52;
+  --clay: #c9a233;
+  --stone: #3f5c47;
+  --charcoal: #f1ecdb;
+  --ink: #f7f3e6;
+
+  --chart-1: #f1ecdb;
+  --chart-2: #a7a48c;
+  --chart-3: #c9a233;
+  --chart-4: #3f5c47;
+  --chart-5: #24392c;
+
+  --sidebar: #102018;
+  --sidebar-foreground: #f1ecdb;
+  --sidebar-primary: #c9a233;
+  --sidebar-primary-foreground: #102018;
+  --sidebar-accent: #24392c;
+  --sidebar-accent-foreground: #f1ecdb;
+  --sidebar-border: #2b4433;
+  --sidebar-ring: #c9a233;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Brand neutrals */
+  --color-ivory: var(--ivory);
+  --color-bone: var(--bone);
+  --color-greige: var(--greige);
+  --color-sand: var(--sand);
+  --color-gold: var(--gold);
+  --color-gold-bright: var(--gold-bright);
+  --color-clay: var(--clay);
+  --color-stone: var(--stone);
+  --color-charcoal: var(--charcoal);
+  --color-ink: var(--ink);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Typography — editorial serif display, grotesque for UI */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, "Times New Roman",
+    serif;
+  --font-heading: var(--font-instrument), ui-serif, Georgia, serif;
+
+  /* Flat, square geometry */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+
+  /* Motion — quiet, slow reveals */
+  --animate-fade-in: fade-in 0.7s ease-out both;
+  --animate-fade-in-up: fade-in-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-in-down: fade-in-down 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-slide-in-right: slide-in-right 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-slide-in-left: slide-in-left 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-reveal: reveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-float: float 8s ease-in-out infinite;
+  --animate-intro-word: intro-word 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-intro-line: intro-line 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-intro-progress: intro-progress 3.1s linear both;
+  --animate-intro-out: intro-out 0.7s ease both;
+  --animate-status-marquee: status-marquee 32s linear infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in-down {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slide-in-right {
+    from { opacity: 0; transform: translateX(-24px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slide-in-left {
+    from { opacity: 0; transform: translateX(24px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes reveal {
+    from { opacity: 0; transform: translateY(18px) scale(0.995); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes intro-word {
+    from { opacity: 0; transform: translateY(105%); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes intro-line {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  @keyframes intro-progress {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  @keyframes intro-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  @keyframes status-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/30;
+  }
+
+  html {
+    @apply font-sans antialiased;
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    text-wrap: pretty;
+    background-image: linear-gradient(to bottom, color-mix(in oklab, var(--gold-bright) 3%, transparent), transparent 22rem);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-normal tracking-tight;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--muted-foreground) 45%, transparent)
+      transparent;
+  }
+
+  @media (min-width: 768px) {
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: color-mix(in oklab, var(--muted-foreground) 40%, transparent);
+      border: 3px solid transparent;
+      background-clip: content-box;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: color-mix(in oklab, var(--muted-foreground) 65%, transparent);
+      background-clip: content-box;
+    }
+  }
+}
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+
+/* Small uppercase label used across the interface */
+@utility eyebrow {
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Editorial link: quiet at rest, underlined on hover */
+@utility link {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color 0.35s ease, color 0.35s ease;
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+/* Full-width hairline rule */
+@utility rule {
+  height: 1px;
+  width: 100%;
+  background: var(--border);
+}
+
+/* Visible keyboard focus, in the brand's gold */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--gold-bright);
+    outline-offset: 3px;
+  }
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.hero-particle {
+  animation-name: particle-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes particle-drift {
+  0%, 100% { opacity: 0.18; transform: translate3d(0, 0, 0) scale(0.8); }
+  45% { opacity: 0.82; transform: translate3d(18px, -26px, 0) scale(1.35); }
+  70% { opacity: 0.38; transform: translate3d(-8px, -46px, 0) scale(0.95); }
+}
+
+.status-marquee {
+  animation: status-marquee 18s linear infinite;
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .status-marquee:hover {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
