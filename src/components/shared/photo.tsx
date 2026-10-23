@@ -8,6 +8,8 @@ interface PhotoProps {
   image?: ImageKey;
   /** Direct image URL (e.g. a Supabase Storage cover). Takes precedence. */
   src?: string;
+  /** Alias for `src`, used by admin-uploaded URLs. */
+  imageSrc?: string;
   /** Override the manifest's default description. */
   alt?: string;
   /** Tailwind aspect utility, e.g. "aspect-[3/4]". */
@@ -31,6 +33,7 @@ interface PhotoProps {
 export function Photo({
   image,
   src,
+  imageSrc,
   alt,
   ratio = "aspect-[3/4]",
   sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
@@ -40,7 +43,7 @@ export function Photo({
   children,
 }: PhotoProps) {
   const asset = image ? IMAGES[image] : undefined;
-  const resolvedSrc = src ?? asset?.src;
+  const resolvedSrc = src ?? imageSrc ?? asset?.src;
   if (!resolvedSrc) return null;
   const resolvedAlt = alt ?? asset?.alt ?? "";
 
