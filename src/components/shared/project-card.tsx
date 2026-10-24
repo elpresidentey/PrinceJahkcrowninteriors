@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { getDictionary } from "@/i18n";
 import { Photo } from "./photo";
 
 interface ProjectCardProps {
@@ -34,7 +35,7 @@ interface ProjectCardProps {
  * The summary and "view" cue slide in from the bottom on hover; on touch
  * devices the essentials (category, name, location) are always visible.
  */
-export function ProjectCard({
+export async function ProjectCard({
   href,
   title,
   category,
@@ -51,6 +52,7 @@ export function ProjectCard({
   large,
   className,
 }: ProjectCardProps) {
+  const t = await getDictionary();
   const body = (
     <>
       <Photo
@@ -72,7 +74,7 @@ export function ProjectCard({
         />
         {featured && (
           <span className="eyebrow absolute left-4 top-4 border border-gold-bright/40 bg-ink/60 px-2.5 py-1 text-gold-bright">
-            Featured
+            {t.card.featured}
           </span>
         )}
 
@@ -104,7 +106,7 @@ export function ProjectCard({
                 </p>
                 {href && (
                   <span className="eyebrow mt-3 inline-flex items-center gap-2 text-gold-bright">
-                    View project
+                    {t.card.view}
                     <ArrowUpRight className="size-3" aria-hidden />
                   </span>
                 )}

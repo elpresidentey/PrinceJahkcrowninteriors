@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { MessageCircle, Phone, Mail, MapPin, Clock } from "lucide-react";
 import { PageHero, Section, SectionHeading, FaqList } from "@/components/shared";
 import { CTASection } from "@/components/sections";
@@ -7,45 +8,58 @@ import { cn } from "@/lib/utils";
 import { BUSINESS_INFO, WHATSAPP_QUOTE_URL } from "@/lib/constants";
 import { SOCIALS } from "@/lib/socials";
 import { FAQS } from "@/lib/content";
+import { getDictionaryFor, hasLocale } from "@/i18n";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Talk to Prince Jahknow Crown Interior Services about your ceiling or interior project. Message on WhatsApp, call, email or find us on Instagram and Facebook — we usually reply within a few hours.",
-};
+export async function generateMetadata({
+  params,
+}: PageProps<"/[lang]/contact">): Promise<Metadata> {
+  const { lang } = await params;
+  if (!hasLocale(lang)) return {};
+  const t = getDictionaryFor(lang);
+  return {
+    title: t.contact.metaTitle,
+    description: t.contact.metaDescription,
+  };
+}
 
-const direct = [
-  {
-    icon: Phone,
-    label: "Phone",
-    value: BUSINESS_INFO.phone,
-    href: `tel:${BUSINESS_INFO.phone}`,
-  },
-  {
-    icon: Mail,
-    label: "Email",
-    value: BUSINESS_INFO.email,
-    href: `mailto:${BUSINESS_INFO.email}`,
-  },
-  {
-    icon: MapPin,
-    label: "Studio",
-    value: BUSINESS_INFO.address,
-  },
-  {
-    icon: Clock,
-    label: "Hours",
-    value: "Mon – Sat, 8am – 6pm",
-  },
-];
+export default async function ContactPage({
+  params,
+}: PageProps<"/[lang]/contact">) {
+  const { lang } = await params;
+  if (!hasLocale(lang)) notFound();
+  const t = getDictionaryFor(lang);
 
-export default function ContactPage() {
+  const direct = [
+    {
+      icon: Phone,
+      label: t.contact.labelPhone,
+      value: BUSINESS_INFO.phone,
+      href: `tel:${BUSINESS_INFO.phone}`,
+    },
+    {
+      icon: Mail,
+      label: t.contact.labelEmail,
+      value: BUSINESS_INFO.email,
+      href: `mailto:${BUSINESS_INFO.email}`,
+    },
+    {
+      icon: MapPin,
+      label: t.contact.labelStudio,
+      value: BUSINESS_INFO.address,
+    },
+    {
+      icon: Clock,
+      label: t.contact.labelHours,
+      value: t.footer.hours,
+    },
+  ];
+
   return (
     <>
       <PageHero
-        eyebrow="Contact"
-        title="Let's talk about your space"
-        subtitle="Send photos of the room on WhatsApp — tell us what you have in mind and we'll tell you honestly what it takes."
+        eyebrow={t.contact.eyebrow}
+        title={t.contact.title}
+        subtitle={t.contact.subtitle}
       />
 
       <Section>
@@ -54,14 +68,12 @@ export default function ContactPage() {
           <div className="lg:col-span-6">
             <div className="relative isolate overflow-hidden bg-primary p-8 text-primary-foreground md:p-10">
               <span aria-hidden className="absolute right-6 top-6 size-16 border border-gold-bright/30" />
-              <span className="eyebrow relative text-gold-bright">Fastest reply</span>
+              <span className="eyebrow relative text-gold-bright">{t.contact.fastest}</span>
               <h2 className="relative mt-4 font-serif text-[2.1rem] leading-[1.02] tracking-tight md:text-[2.8rem]">
-                Chat on WhatsApp
+                {t.contact.chatTitle}
               </h2>
               <p className="relative mt-5 max-w-md text-[0.95rem] leading-relaxed text-primary-foreground/70">
-                Send photos and room sizes, tell us the timeline you are working to,
-                and we will come back with a clear, itemised quote within a week.
-                No obligation, no pressure.
+                {t.contact.chatBody}
               </p>
 
               <a
@@ -71,7 +83,7 @@ export default function ContactPage() {
                 className={cn(goldCta, "relative mt-8")}
               >
                 <MessageCircle className="size-4" aria-hidden />
-                Start a conversation
+                {t.contact.startConversation}
               </a>
 
               <p className="eyebrow relative mt-6 text-primary-foreground/55">
@@ -80,7 +92,7 @@ export default function ContactPage() {
             </div>
 
             <div className="mt-10">
-              <h3 className="eyebrow text-gold">Follow the studio</h3>
+              <h3 className="eyebrow text-gold">{t.contact.followUs}</h3>
               <ul className="mt-6 grid gap-4 sm:grid-cols-2">
                 {SOCIALS.map((social) => (
                   <li key={social.label}>
@@ -121,9 +133,9 @@ export default function ContactPage() {
           {/* The rest, plainly listed */}
           <div className="lg:col-span-6">
             <SectionHeading
-              eyebrow="Direct"
-              title="Or reach us the old-fashioned way"
-              subtitle="Call, email or visit the studio — we are happy to talk it through either way."
+              eyebrow={t.contact.directEyebrow}
+              title={t.contact.directTitle}
+              subtitle={t.contact.directSubtitle}
               className="mb-10"
             />
 
@@ -155,12 +167,11 @@ export default function ContactPage() {
             </dl>
 
             <p className="mt-8 max-w-md text-[0.9rem] leading-relaxed text-muted-foreground">
-              Visits are by appointment — message on WhatsApp first so someone is
-              expecting you. We work across Lagos, from Lekki to Surulere.
+              {t.contact.visitsNote}
             </p>
 
             <p className="eyebrow mt-8 text-muted-foreground">
-              BN Reg. No. {BUSINESS_INFO.regNo} · CAC, Nigeria
+              {t.contact.regNote.replace("{reg}", BUSINESS_INFO.regNo)}
             </p>
           </div>
         </div>
@@ -168,9 +179,9 @@ export default function ContactPage() {
 
       <Section background="secondary">
         <SectionHeading
-          eyebrow="Good to know"
-          title="Questions we hear a lot"
-          subtitle="Still unsure about something? Message us — there's no such thing as a silly question."
+          eyebrow={t.contact.faqEyebrow}
+          title={t.contact.faqTitle}
+          subtitle={t.contact.faqSubtitle}
         />
         <div className="mt-12 max-w-3xl">
           <FaqList items={FAQS} />
@@ -178,9 +189,11 @@ export default function ContactPage() {
       </Section>
 
       <CTASection
-        title="Prefer a proper quote?"
-        subtitle="Send photos and dimensions on WhatsApp — receive a clear, itemised estimate within a week."
-        primaryCTA={{ text: "Message us on WhatsApp", href: WHATSAPP_QUOTE_URL }}
+        eyebrow={t.cta.eyebrow}
+        title={t.contact.ctaTitle}
+        subtitle={t.contact.ctaSubtitle}
+        primaryCTA={{ text: t.contact.ctaButton, href: WHATSAPP_QUOTE_URL }}
+        whatsappLabel={t.cta.chatWhatsApp}
         showWhatsApp={false}
       />
     </>

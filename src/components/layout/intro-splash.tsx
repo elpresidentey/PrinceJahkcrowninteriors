@@ -15,6 +15,13 @@ const WORDS = [
   { text: "Crown", delay: 1230 },
 ] as const;
 
+interface IntroSplashProps {
+  /** Brand line under the crest, e.g. "Plaster Decors · Est. in Lagos". */
+  tagline: string;
+  /** Skip hint, e.g. "Press any key to skip". */
+  skipHint: string;
+}
+
 type Phase = "hidden" | "playing" | "leaving";
 
 /**
@@ -23,7 +30,7 @@ type Phase = "hidden" | "playing" | "leaving";
  * and a video-style progress bar runs the timeline. Once through, the
  * overlay dissolves into the page.
  */
-export function IntroSplash() {
+export function IntroSplash({ tagline, skipHint }: IntroSplashProps) {
   const [phase, setPhase] = useState<Phase>("hidden");
   const startedRef = useRef(false);
 
@@ -130,7 +137,7 @@ export function IntroSplash() {
         />
 
         <p className="eyebrow mt-5 animate-fade-in text-gold-bright [animation-delay:1500ms]">
-          Plaster Decors · Est. in Lagos
+          {tagline}
         </p>
       </div>
 
@@ -139,7 +146,7 @@ export function IntroSplash() {
         onClick={skip}
         className="eyebrow absolute bottom-8 right-5 text-gold/70 transition-colors hover:text-gold md:right-8"
       >
-        Press any key to skip
+        {skipHint}
       </button>
 
       {/* Video-style timeline */}

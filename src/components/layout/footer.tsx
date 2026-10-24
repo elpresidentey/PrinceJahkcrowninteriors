@@ -3,29 +3,32 @@ import Image from "next/image";
 import { Container } from "@/components/shared/container";
 import { CurrentYear } from "./current-year";
 import { BRAND_NAME } from "./logo";
-import {
-  BUSINESS_INFO,
-  NAV_LINKS,
-  WHATSAPP_QUOTE_URL,
-} from "@/lib/constants";
+import { BUSINESS_INFO, WHATSAPP_QUOTE_URL } from "@/lib/constants";
 import { SOCIALS, WHATSAPP_PATH } from "@/lib/socials";
 import { SERVICES } from "@/lib/content";
+import { getDictionaryFor } from "@/i18n";
+import { localePath } from "@/i18n/config";
+import type { Locale } from "@/i18n/config";
+
+interface FooterProps {
+  lang: Locale;
+}
 
 /**
  * The footer brands itself with the complete crest — crown, house, PJC
  * monogram and the "Prince Jahknow Crown / Plaster Decors" banner — exactly
  * as the artwork was drawn, with nothing sliced off.
  */
-function BrandCrest() {
+function BrandCrest({ lang, tagline }: { lang: Locale; tagline: string }) {
   return (
     <Link
-      href="/"
+      href={localePath(lang)}
       aria-label={`${BRAND_NAME} — home`}
       className="group inline-block transition-opacity hover:opacity-90"
     >
       <Image
         src="/logo.webp"
-        alt={`${BRAND_NAME} — ${BUSINESS_INFO.tagline}`}
+        alt={`${BRAND_NAME} — ${tagline}`}
         width={720}
         height={525}
         className="h-[4.5rem] w-auto md:h-16"
@@ -57,7 +60,17 @@ function Dash({ className }: { className?: string }) {
   );
 }
 
-export function Footer() {
+export function Footer({ lang }: FooterProps) {
+  const t = getDictionaryFor(lang);
+
+  const navLinks = [
+    { label: t.nav.home, href: localePath(lang) },
+    { label: t.nav.projects, href: localePath(lang, "/projects") },
+    { label: t.nav.services, href: localePath(lang, "/services") },
+    { label: t.nav.about, href: localePath(lang, "/about") },
+    { label: t.nav.contact, href: localePath(lang, "/contact") },
+  ];
+
   return (
     <footer className="bg-ink text-primary-foreground">
       {/* ------------------------------------------------ main ledger grid */}
@@ -65,17 +78,17 @@ export function Footer() {
         <div className="grid gap-x-10 gap-y-12 py-14 md:grid-cols-2 md:gap-y-14 lg:grid-cols-12 lg:py-16">
           {/* Brand, quote panel, socials */}
           <div className="lg:col-span-4">
-            <BrandCrest />
+            <BrandCrest lang={lang} tagline={BUSINESS_INFO.tagline} />
 
             <div className="mt-8 bg-gold p-6 text-ink">
               <p className="font-serif text-xl leading-snug">
-                Get a clear, itemised quote within 7 days.
+                {t.footer.quotePanel}
               </p>
               <Link
-                href="/contact"
+                href={localePath(lang, "/contact")}
                 className="eyebrow mt-4 inline-block bg-ink px-5 py-3 text-primary-foreground transition-colors hover:bg-charcoal"
               >
-                Start a project ↗
+                {t.footer.startProject}
               </Link>
             </div>
 
@@ -106,7 +119,7 @@ export function Footer() {
                 href={WHATSAPP_QUOTE_URL}
                 target="_blank"
                 rel="noreferrer noopener"
-                aria-label="WhatsApp"
+                aria-label={t.nav.chatWhatsApp}
                 className="flex size-9 items-center justify-center border border-primary-foreground/20 text-primary-foreground/70 transition-colors duration-300 hover:border-gold-bright hover:text-gold-bright"
               >
                 <svg
@@ -125,9 +138,9 @@ export function Footer() {
             aria-label="Footer explore"
             className="lg:col-span-2"
           >
-            <ColumnHead>Explore</ColumnHead>
+            <ColumnHead>{t.footer.explore}</ColumnHead>
             <ul className="mt-5 space-y-3.5">
-              {NAV_LINKS.map((link) => (
+              {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -142,12 +155,12 @@ export function Footer() {
 
           {/* Services */}
           <div className="lg:col-span-2">
-            <ColumnHead>Services</ColumnHead>
+            <ColumnHead>{t.footer.servicesColumn}</ColumnHead>
             <ul className="mt-5 space-y-3.5">
               {SERVICES.slice(0, 5).map((service) => (
                 <li key={service.name}>
                   <Link
-                    href="/services"
+                    href={`${localePath(lang, "/services")}#${service.slug}`}
                     className="link text-[0.95rem] text-primary-foreground/70 transition-colors hover:text-primary-foreground"
                   >
                     {service.name}
@@ -156,10 +169,10 @@ export function Footer() {
               ))}
               <li>
                 <Link
-                  href="/services"
+                  href={localePath(lang, "/services")}
                   className="link inline-block pt-1 text-[0.95rem] font-medium text-gold-bright transition-colors hover:text-primary-foreground"
                 >
-                  All {SERVICES.length} services ↗
+                  {t.footer.allServices.replace("{n}", String(SERVICES.length))}
                 </Link>
               </li>
             </ul>
@@ -167,7 +180,7 @@ export function Footer() {
 
           {/* Contact */}
           <div className="lg:col-span-4 lg:col-start-9">
-            <ColumnHead>Contact</ColumnHead>
+            <ColumnHead>{t.footer.contact}</ColumnHead>
             <ul className="mt-5 space-y-4">
               <li>
                 <a
@@ -195,7 +208,7 @@ export function Footer() {
                   className="group flex items-center gap-3 text-[0.95rem] text-primary-foreground/75 transition-colors hover:text-primary-foreground"
                 >
                   <Dash />
-                  Chat on WhatsApp
+                  {t.nav.chatWhatsApp}
                 </a>
               </li>
               <li className="group flex items-start gap-3 pt-1 text-[0.95rem] text-primary-foreground/60">
@@ -204,7 +217,7 @@ export function Footer() {
               </li>
               <li className="group flex items-center gap-3 text-[0.95rem] text-primary-foreground/60">
                 <Dash />
-                Mon – Sat, 8am – 6pm
+                {t.footer.hours}
               </li>
             </ul>
           </div>
@@ -223,10 +236,10 @@ export function Footer() {
               · Lagos, Nigeria
             </p>
             <p className="eyebrow text-primary-foreground/55">
-              BN Reg. No. {BUSINESS_INFO.regNo} · CAC, Nigeria
+              {t.footer.regLine.replace("{reg}", BUSINESS_INFO.regNo)}
             </p>
             <p className="eyebrow text-primary-foreground/55">
-              Serving Lagos &amp; beyond
+              {t.footer.serving}
             </p>
           </div>
         </Container>

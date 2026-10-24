@@ -11,25 +11,28 @@ import { cn, whatsappUrl } from "@/lib/utils";
 import { BUSINESS_INFO } from "@/lib/constants";
 import { SERVICES } from "@/lib/content";
 import { submitEnquiryAction } from "@/app/actions/enquiry";
+import type { Dictionary } from "@/i18n/dictionaries/en";
 
 interface EnquiryFormProps {
   /** "quote" asks for a service + project details; "contact" is a short message. */
   variant?: "quote" | "contact";
   className?: string;
+  /** Translated labels/placeholders/messages from the active dictionary. */
+  strings: Dictionary["form"];
 }
 
 const PROPERTY_TYPES = [
-  { value: "house", label: "House" },
-  { value: "apartment", label: "Apartment" },
-  { value: "office", label: "Office" },
-  { value: "shop", label: "Shop" },
-  { value: "restaurant", label: "Restaurant" },
-  { value: "hotel", label: "Hotel" },
-  { value: "church", label: "Church" },
-  { value: "other", label: "Other" },
+  { value: "house", label: "house" },
+  { value: "apartment", label: "apartment" },
+  { value: "office", label: "office" },
+  { value: "shop", label: "shop" },
+  { value: "restaurant", label: "restaurant" },
+  { value: "hotel", label: "hotel" },
+  { value: "church", label: "church" },
+  { value: "other", label: "other" },
 ];
 
-export function EnquiryForm({ variant = "quote", className }: EnquiryFormProps) {
+export function EnquiryForm({ variant = "quote", className, strings: t }: EnquiryFormProps) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
@@ -111,10 +114,10 @@ export function EnquiryForm({ variant = "quote", className }: EnquiryFormProps) 
       <div className="border-b border-border py-7">
         <span className="eyebrow flex items-center gap-3 text-gold">
           <span aria-hidden className="h-px w-8 bg-gold-bright" />
-          Project brief
+          {t.eyebrow}
         </span>
         <p className="mt-3 max-w-md font-serif text-2xl leading-tight text-foreground">
-          A few details are all we need to get started.
+          {t.headline}
         </p>
       </div>
 
@@ -134,17 +137,17 @@ export function EnquiryForm({ variant = "quote", className }: EnquiryFormProps) 
         </div>
 
         <div className="space-y-2.5">
-          <Label htmlFor="name">Full name</Label>
+          <Label htmlFor="name">{t.fullName}</Label>
           <Input
             id="name"
             required
             value={name}
             onChange={(event) => setName(event.target.value)}
-            placeholder="Your name"
+            placeholder={t.yourName}
           />
         </div>
         <div className="space-y-2.5">
-          <Label htmlFor="phone">Phone / WhatsApp</Label>
+          <Label htmlFor="phone">{t.phone}</Label>
           <Input
             id="phone"
             type="tel"
@@ -156,19 +159,19 @@ export function EnquiryForm({ variant = "quote", className }: EnquiryFormProps) 
         </div>
 
         <div className="space-y-2.5">
-          <Label htmlFor="location">Project location</Label>
+          <Label htmlFor="location">{t.location}</Label>
           <Input
             id="location"
             value={location}
             onChange={(event) => setLocation(event.target.value)}
-            placeholder="e.g. Lekki, Lagos"
+            placeholder={t.locationPlaceholder}
           />
         </div>
 
         {variant === "quote" && (
           <>
             <div className="space-y-2.5">
-              <Label htmlFor="property-type">Property type</Label>
+              <Label htmlFor="property-type">{t.propertyType}</Label>
               <NativeSelect
                 id="property-type"
                 value={propertyType}
@@ -176,25 +179,25 @@ export function EnquiryForm({ variant = "quote", className }: EnquiryFormProps) 
               >
                 {PROPERTY_TYPES.map((item) => (
                   <option key={item.value} value={item.value}>
-                    {item.label}
+                    {t.options[item.value as keyof typeof t.options]}
                   </option>
                 ))}
               </NativeSelect>
             </div>
             <div className="space-y-2.5">
-              <Label htmlFor="service">Service of interest</Label>
+              <Label htmlFor="service">{t.service}</Label>
               <NativeSelect
                 id="service"
                 value={service}
                 onChange={(event) => setService(event.target.value)}
               >
-                <option value="">Not sure yet</option>
+                <option value="">{t.notSure}</option>
                 {SERVICES.map((item) => (
                   <option key={item.slug} value={item.name}>
                     {item.name}
                   </option>
                 ))}
-                <option value="Something else">Something else</option>
+                <option value="Something else">{t.somethingElse}</option>
               </NativeSelect>
             </div>
           </>
@@ -202,7 +205,7 @@ export function EnquiryForm({ variant = "quote", className }: EnquiryFormProps) 
 
         <div className="space-y-2.5 md:col-span-2">
           <Label htmlFor="details">
-            {variant === "quote" ? "Tell us about the space" : "Your message"}
+            {variant === "quote" ? t.messageQuote : t.messageContact}
           </Label>
           <Textarea
             id="details"
@@ -210,9 +213,7 @@ export function EnquiryForm({ variant = "quote", className }: EnquiryFormProps) 
             onChange={(event) => setDetails(event.target.value)}
             rows={4}
             placeholder={
-              variant === "quote"
-                ? "Room sizes, ceiling height, the look you want, timeline…"
-                : "How can we help?"
+              variant === "quote" ? t.placeholderQuote : t.placeholderContact
             }
           />
         </div>
@@ -220,30 +221,30 @@ export function EnquiryForm({ variant = "quote", className }: EnquiryFormProps) 
 
       <div className="flex flex-col gap-5 border-t border-border py-8 sm:flex-row sm:items-center sm:justify-between">
         <Button type="submit" variant="default" size="lg">
-          {variant === "quote" ? "Send my request" : "Send message"}
+          {variant === "quote" ? t.submitQuote : t.submitContact}
         </Button>
         <p className="text-[0.8rem] text-muted-foreground">
-          Opens WhatsApp — your details are never lost in an inbox.
+          {t.whatsappNote}
         </p>
       </div>
 
       {missing && !sent && (
         <p role="alert" className="border-t border-border py-5 text-[0.85rem] text-destructive">
-          Please fill in your name and phone number so we can reach you.
+          {t.missing}
         </p>
       )}
 
       {sent && (
         <p role="status" className="border-t border-border py-5 text-[0.85rem] text-clay">
-          WhatsApp should have opened with your details. If it didn&apos;t,{" "}
+          {t.sentTitle}{" "}
           {waLink ? (
             <a href={waLink} target="_blank" rel="noreferrer noopener" className="underline">
-              message us here
+              {t.sentLink}
             </a>
           ) : (
-            "message"
+            t.sentFallback
           )}{" "}
-          or call {BUSINESS_INFO.phone} directly.
+          {t.sentDirect.replace("{phone}", BUSINESS_INFO.phone)}
         </p>
       )}
     </form>

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { STATS } from "@/lib/content";
+import { getDictionaryFor } from "@/i18n";
+import type { Locale } from "@/i18n/config";
 
 const cellBorders = [
   "border-b border-gold-bright/15 lg:border-b-0",
@@ -16,7 +17,9 @@ const cellPadding = [
   "pl-5 sm:pl-7 lg:pl-9",
 ];
 
-export function Stats() {
+export function Stats({ lang }: { lang: Locale }) {
+  const t = getDictionaryFor(lang);
+
   return (
     <section className="relative isolate overflow-hidden border-y border-gold-bright/30 bg-primary text-primary-foreground">
       <Image
@@ -29,7 +32,7 @@ export function Stats() {
       />
 
       <dl className="relative mx-auto grid w-full max-w-[1600px] grid-cols-2 px-5 sm:px-8 lg:grid-cols-4 lg:px-12">
-        {STATS.map((stat, index) => (
+        {t.stats.map((stat, index) => (
           <div
             key={stat.label}
             className={cn(

@@ -4,14 +4,33 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { BUSINESS_INFO, NAV_LINKS, WHATSAPP_QUOTE_URL } from "@/lib/constants";
+import { BUSINESS_INFO, WHATSAPP_QUOTE_URL } from "@/lib/constants";
+import { LanguageSwitcher } from "./language-switcher";
+import type { Locale } from "@/i18n/config";
 
 interface MobileMenuProps {
   open: boolean;
   onClose: () => void;
+  lang: Locale;
+  links: { label: string; href: string }[];
+  menuLabel: string;
+  quoteLabel: string;
+  closeLabel: string;
+  closeMenuAria: string;
+  switcherLabel: string;
 }
 
-export function MobileMenu({ open, onClose }: MobileMenuProps) {
+export function MobileMenu({
+  open,
+  onClose,
+  lang,
+  links,
+  menuLabel,
+  quoteLabel,
+  closeLabel,
+  closeMenuAria,
+  switcherLabel,
+}: MobileMenuProps) {
   const pathname = usePathname();
   const panelRef = useRef<HTMLElement>(null);
 
@@ -79,22 +98,22 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
         )}
       >
         <div className="flex h-[4.75rem] items-center justify-between border-b border-primary-foreground/15 px-5 sm:px-8">
-          <span className="eyebrow text-gold-bright">Menu</span>
+          <span className="eyebrow text-gold-bright">{menuLabel}</span>
           <button
             onClick={close}
-            aria-label="Close menu"
+            aria-label={closeMenuAria}
             className="eyebrow text-primary-foreground"
           >
-            Close
+            {closeLabel}
           </button>
         </div>
 
         <ul className="flex flex-1 flex-col overflow-y-auto px-5 py-8 sm:px-8">
-          {NAV_LINKS.map((link, index) => {
-            const active =
-              link.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(link.href);
+          {links.map((link, index) => {
+            const isHome = link.href.split("/").length <= 2;
+            const active = isHome
+              ? pathname === link.href
+              : pathname.startsWith(link.href);
 
             return (
               <li key={link.href} className="border-b border-primary-foreground/15">
@@ -130,7 +149,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
             rel="noreferrer noopener"
             className="eyebrow block bg-gold-bright py-4 text-center text-ink transition-colors hover:bg-primary-foreground hover:text-primary"
           >
-            Start a project
+            {quoteLabel}
           </a>
           <a
             href={WHATSAPP_QUOTE_URL}
@@ -141,6 +160,9 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
           >
             WhatsApp · {BUSINESS_INFO.phone}
           </a>
+          <div className="pt-2 text-center">
+            <LanguageSwitcher current={lang} label={switcherLabel} className="justify-center" />
+          </div>
         </div>
       </nav>
     </div>

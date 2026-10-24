@@ -22,7 +22,21 @@ interface BeforeInstallPromptEvent extends Event {
  * dismissal, no persisted "never ask again" — every visitor answers it once
  * per visit, and it returns on the next visit until the app is installed.
  */
-export function InstallPrompt() {
+export function InstallPrompt({
+  strings,
+}: {
+  /** Translated dialog copy from the [lang] layout. */
+  strings: {
+    dialogAria: string;
+    title: string;
+    iosBefore: string;
+    iosAfter: string;
+    chromiumBody: string;
+    installButton: string;
+    dismiss: string;
+    gotIt: string;
+  };
+}) {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [iosHint, setIosHint] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -96,7 +110,7 @@ export function InstallPrompt() {
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Install Prince Jahknow Crown"
+        aria-label={strings.dialogAria}
         tabIndex={-1}
         className="relative w-full max-w-sm animate-fade-in-up border border-gold-bright/40 bg-background p-6 pt-8 text-center text-foreground shadow-[0_32px_90px_-32px_rgba(10,20,14,0.75)] outline-none"
       >
@@ -114,41 +128,40 @@ export function InstallPrompt() {
         />
         <p className="eyebrow mt-6 text-gold">Prince Jahknow Crown</p>
         <p className="mt-3 font-serif text-[1.65rem] leading-tight">
-          Install the app
+          {strings.title}
         </p>
 
         {iosHint ? (
           <>
-            <p className="mx-auto mt-3 max-w-[32ch] text-[0.85rem] leading-relaxed text-muted-foreground">
-              Tap <Share className="mx-1 inline size-3.5 align-[-2px]" /> Share,
-              then <span className="text-foreground">Add to Home Screen</span> to
-              keep us a tap away.
+            <p className="mx-auto mt-3 max-w-[36ch] text-[0.85rem] leading-relaxed text-muted-foreground">
+              {strings.iosBefore}{" "}
+              <Share className="mx-1 inline size-3.5 align-[-2px]" />{" "}
+              {strings.iosAfter}
             </p>
             <button
               onClick={dismiss}
               className="eyebrow mt-7 w-full bg-primary py-4 text-primary-foreground transition-colors hover:bg-gold-bright hover:text-ink"
             >
-              Got it
+              {strings.gotIt}
             </button>
           </>
         ) : (
           <>
             <p className="mx-auto mt-3 max-w-[32ch] text-[0.85rem] leading-relaxed text-muted-foreground">
-              Add Prince Jahknow Crown to your home screen for a faster,
-              full-screen experience.
+              {strings.chromiumBody}
             </p>
             <div className="mt-7 flex flex-col gap-3">
               <button
                 onClick={install}
                 className="eyebrow w-full bg-primary py-4 text-primary-foreground transition-colors hover:bg-gold-bright hover:text-ink"
               >
-                Install app
+                {strings.installButton}
               </button>
               <button
                 onClick={dismiss}
                 className="eyebrow py-2 text-muted-foreground transition-colors hover:text-gold"
               >
-                Not now
+                {strings.dismiss}
               </button>
             </div>
           </>

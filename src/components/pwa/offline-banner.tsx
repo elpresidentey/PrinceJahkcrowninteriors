@@ -8,7 +8,7 @@ import { WifiOff } from "lucide-react";
  * enough to reassure a user on a flaky mobile connection that their work
  * isn't lost. When the connection returns the bar slides away on its own.
  */
-export function OfflineBanner() {
+export function OfflineBanner({ banner }: { banner: string }) {
   const [offline, setOffline] = useState(false);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export function OfflineBanner() {
     >
       <p className="mx-auto flex w-full max-w-[1600px] items-center justify-center gap-3 px-5 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground sm:px-8 lg:px-12">
         <WifiOff className="size-3.5" />
-        Offline — we&apos;ll sync when you reconnect
+        {banner}
       </p>
     </div>
   );

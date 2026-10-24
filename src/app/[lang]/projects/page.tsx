@@ -1,23 +1,39 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { PageHero, Section, ProjectCard } from "@/components/shared";
 import { CTASection } from "@/components/sections";
 import { getPublicProjectItems } from "@/lib/projects";
 import { cn } from "@/lib/utils";
+import { WHATSAPP_QUOTE_URL } from "@/lib/constants";
+import { getDictionaryFor, hasLocale } from "@/i18n";
+import { localePath } from "@/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Projects",
-  description:
-    "Selected POP ceilings, feature walls and interior finishing projects delivered across Lagos.",
-};
+export async function generateMetadata({
+  params,
+}: PageProps<"/[lang]/projects">): Promise<Metadata> {
+  const { lang } = await params;
+  if (!hasLocale(lang)) return {};
+  const t = getDictionaryFor(lang);
+  return {
+    title: t.projectsIndex.metaTitle,
+    description: t.projectsIndex.metaDescription,
+  };
+}
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({
+  params,
+}: PageProps<"/[lang]/projects">) {
+  const { lang } = await params;
+  if (!hasLocale(lang)) notFound();
+  const t = getDictionaryFor(lang);
   const projects = await getPublicProjectItems();
+
   return (
     <>
       <PageHero
-        eyebrow="Selected work"
-        title="Every ceiling has a story"
-        subtitle="A portfolio of ceilings, walls and full interiors across Lagos — every one finished by hand and inspected before handover."
+        eyebrow={t.projectsIndex.eyebrow}
+        title={t.projectsIndex.title}
+        subtitle={t.projectsIndex.subtitle}
       />
 
       <Section>
@@ -32,7 +48,7 @@ export default async function ProjectsPage() {
               )}
             >
               <ProjectCard
-                href={`/projects/${project.slug}`}
+                href={localePath(lang, `/projects/${project.slug}`)}
                 title={project.title}
                 category={project.category}
                 location={project.location}
@@ -58,8 +74,12 @@ export default async function ProjectsPage() {
       </Section>
 
       <CTASection
-        title="Want your space on this page?"
-        subtitle="Tell us what you have in mind and we'll show you what's possible within your budget."
+        eyebrow={t.cta.eyebrow}
+        title={t.projectsIndex.ctaTitle}
+        subtitle={t.projectsIndex.ctaSubtitle}
+        primaryCTA={{ text: t.cta.quoteCta, href: WHATSAPP_QUOTE_URL }}
+        whatsappLabel={t.cta.chatWhatsApp}
+        secondaryCTA={{ text: t.cta.viewProjects, href: localePath(lang, "/services") }}
       />
     </>
   );

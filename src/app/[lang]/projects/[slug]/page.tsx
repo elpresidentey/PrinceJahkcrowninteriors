@@ -7,12 +7,21 @@ import { ArrowLeft } from "lucide-react";
 import { PageHero, Section, Photo } from "@/components/shared";
 import { CTASection } from "@/components/sections";
 import { getProjectDetail } from "@/lib/projects";
+import { getDictionaryFor, hasLocale } from "@/i18n";
+import { localePath } from "@/i18n/config";
+import { WHATSAPP_QUOTE_URL } from "@/lib/constants";
 
-export const metadata: Metadata = {
-  title: "Project",
-  description:
-    "A completed POP ceiling, feature wall or interior project by Prince Jahknow Crown Interior Services — photos, location and the scope of work.",
-};
+export async function generateMetadata({
+  params,
+}: PageProps<"/[lang]/projects/[slug]">): Promise<Metadata> {
+  const { lang } = await params;
+  if (!hasLocale(lang)) return {};
+  const t = getDictionaryFor(lang);
+  return {
+    title: t.projectDetail.metaTitle,
+    description: t.projectDetail.metaDescription,
+  };
+}
 
 // The project data and the params are runtime data; render this route
 // blocking instead of against a prerendered shell.
@@ -25,33 +34,44 @@ export const instant = false;
  */
 export default function ProjectDetailPage({
   params,
-}: PageProps<"/projects/[slug]">) {
+}: PageProps<"/[lang]/projects/[slug]">) {
   return (
     <>
-      <PageHero
-        eyebrow="Selected work"
-        title="One project, start to finish"
-        subtitle="A real space in Lagos — designed, built and finished by the same hands that will finish yours."
-      />
-
+      <LocalizedHero params={params} />
       <Suspense fallback={<DetailSkeleton />}>
         <ProjectContent params={params} />
       </Suspense>
-
-      <CTASection
-        title="Want your space here next?"
-        subtitle="Tell us what you have in mind and we'll show you what's possible within your budget."
-      />
+      <LocalizedCTA params={params} />
     </>
+  );
+}
+
+async function LocalizedHero({
+  params,
+}: {
+  params: Promise<{ lang: string; slug: string }>;
+}) {
+  const { lang } = await params;
+  if (!hasLocale(lang)) notFound();
+  const t = getDictionaryFor(lang);
+
+  return (
+    <PageHero
+      eyebrow={t.projectDetail.eyebrow}
+      title={t.projectDetail.title}
+      subtitle={t.projectDetail.subtitle}
+    />
   );
 }
 
 async function ProjectContent({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ lang: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, lang } = await params;
+  if (!hasLocale(lang)) notFound();
+  const t = getDictionaryFor(lang);
   const detail = await getProjectDetail(slug);
   if (!detail) notFound();
 
@@ -60,11 +80,11 @@ async function ProjectContent({
   return (
     <Section containerSize="wide">
       <Link
-        href="/projects"
+        href={localePath(lang, "/projects")}
         className="eyebrow inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
-        All projects
+        {t.projectDetail.back}
       </Link>
 
       {/* Opening frame */}
@@ -92,18 +112,18 @@ async function ProjectContent({
 
         <dl className="md:col-span-5 md:border-l md:border-border md:pl-10">
           <div className="border-b border-border py-4">
-            <dt className="eyebrow text-muted-foreground">Location</dt>
+            <dt className="eyebrow text-muted-foreground">{t.projectDetail.location}</dt>
             <dd className="mt-1.5 text-[0.95rem] text-foreground">{item.location}</dd>
           </div>
           {item.style && (
             <div className="border-b border-border py-4">
-              <dt className="eyebrow text-muted-foreground">Style</dt>
+              <dt className="eyebrow text-muted-foreground">{t.projectDetail.style}</dt>
               <dd className="mt-1.5 text-[0.95rem] text-foreground">{item.style}</dd>
             </div>
           )}
           {item.services.length > 0 && (
             <div className="border-b border-border py-4">
-              <dt className="eyebrow text-muted-foreground">Scope</dt>
+              <dt className="eyebrow text-muted-foreground">{t.projectDetail.scope}</dt>
               <dd className="mt-1.5 flex flex-wrap gap-2">
                 {item.services.map((service) => (
                   <span
@@ -122,20 +142,28 @@ async function ProjectContent({
       {/* Gallery — only database-backed projects carry photos */}
       {gallery.length > 0 && (
         <div className="mt-14 border-t border-border pt-12">
-          <p className="eyebrow text-muted-foreground">The work</p>
+          <p className="eyebrow text-muted-foreground">{t.projectDetail.theWork}</p>
           <div className="mt-6 grid gap-6 sm:grid-cols-2">
             {gallery.map((image, index) => (
               <figure key={image.url + index} className="m-0">
                 <Photo
                   src={image.url}
-                  alt={`${item.title} — ${image.type === "before" ? "before finishing" : image.type === "after" ? "after finishing" : "detail"}`}
+                  alt={
+                    image.type === "before"
+                      ? t.projectDetail.altBefore.replace("{title}", item.title)
+                      : image.type === "after"
+                        ? t.projectDetail.altAfter.replace("{title}", item.title)
+                        : t.projectDetail.altDetail.replace("{title}", item.title)
+                  }
                   ratio="aspect-[4/3]"
                   sizes="(min-width: 640px) 50vw, 100vw"
                   priority={index === 0}
                 />
                 {image.type !== "gallery" && (
                   <figcaption className="eyebrow mt-2 text-muted-foreground">
-                    {image.type === "before" ? "Before" : "After"}
+                    {image.type === "before"
+                      ? t.projectDetail.before
+                      : t.projectDetail.after}
                   </figcaption>
                 )}
               </figure>
@@ -144,6 +172,27 @@ async function ProjectContent({
         </div>
       )}
     </Section>
+  );
+}
+
+async function LocalizedCTA({
+  params,
+}: {
+  params: Promise<{ lang: string; slug: string }>;
+}) {
+  const { lang } = await params;
+  if (!hasLocale(lang)) notFound();
+  const t = getDictionaryFor(lang);
+
+  return (
+    <CTASection
+      eyebrow={t.cta.eyebrow}
+      title={t.projectDetail.ctaTitle}
+      subtitle={t.projectDetail.ctaSubtitle}
+      primaryCTA={{ text: t.cta.quoteCta, href: WHATSAPP_QUOTE_URL }}
+      whatsappLabel={t.cta.chatWhatsApp}
+      secondaryCTA={{ text: t.cta.viewProjects, href: localePath(lang, "/projects") }}
+    />
   );
 }
 

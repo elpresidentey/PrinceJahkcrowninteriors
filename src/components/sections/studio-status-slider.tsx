@@ -9,28 +9,23 @@ type Weather = {
   kind: "sun" | "cloud" | "rain";
 };
 
-const initialWeather: Weather = {
-  temperature: null,
-  label: "Lagos weather updating",
-  kind: "cloud",
-};
+/** Translated marquee copy, supplied by the [lang] layout via the hero. */
+export interface StatusStrings {
+  aria: string;
+  updating: string;
+  clear: string;
+  partly: string;
+  rain: string;
+  sr: string;
+  updates: readonly string[];
+}
 
-const weatherLabel = (code: number) => {
-  if (code <= 1) return { label: "Clear skies", kind: "sun" as const };
-  if (code <= 3 || code === 45 || code === 48) {
-    return { label: "Partly cloudy", kind: "cloud" as const };
-  }
-  return { label: "Rain in the area", kind: "rain" as const };
-};
-
-const studioUpdates = [
-  { text: "Designing tailored interiors", Icon: Ruler },
-  { text: "Building POP ceilings", Icon: Lightbulb },
-  { text: "Finishing feature walls", Icon: Ruler },
-];
-
-export function StudioStatusSlider() {
-  const [weather, setWeather] = useState<Weather>(initialWeather);
+export function StudioStatusSlider({ aria: strings }: { aria: StatusStrings }) {
+  const [weather, setWeather] = useState<Omit<Weather, "label"> & { label: string }>(() => ({
+    temperature: null,
+    label: strings.updating,
+    kind: "cloud",
+  }));
 
   useEffect(() => {
     const controller = new AbortController();
@@ -66,6 +61,20 @@ export function StudioStatusSlider() {
     };
   }, []);
 
+  const weatherLabel = (code: number) => {
+    if (code <= 1) return { label: strings.clear, kind: "sun" as const };
+    if (code <= 3 || code === 45 || code === 48) {
+      return { label: strings.partly, kind: "cloud" as const };
+    }
+    return { label: strings.rain, kind: "rain" as const };
+  };
+
+  const studioUpdates = [
+    { text: strings.updates[0], Icon: Ruler },
+    { text: strings.updates[1], Icon: Lightbulb },
+    { text: strings.updates[2], Icon: Ruler },
+  ];
+
   const WeatherIcon =
     weather.kind === "sun" ? Sun : weather.kind === "rain" ? CloudRain : CloudSun;
   const weatherText =
@@ -79,12 +88,11 @@ export function StudioStatusSlider() {
 
   return (
     <aside
-      aria-label="Studio status"
+      aria-label={strings.aria}
       className="relative z-10 w-full overflow-hidden border-t border-primary-foreground/15 bg-primary/70 backdrop-blur-sm"
     >
       <p className="sr-only" aria-live="polite">
-        {weatherText}. Prince Jahknow Crown Interior Services is designing
-        tailored interiors, building POP ceilings, and finishing feature walls.
+        {weatherText}. {strings.sr}
       </p>
       <div aria-hidden className="status-marquee flex w-max motion-reduce:animate-none">
         {[...updates, ...updates].map(({ text, Icon }, index) => (

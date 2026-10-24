@@ -37,17 +37,21 @@ export function LogoMark({ className }: { className?: string }) {
 interface LogoProps {
   className?: string;
   size?: "sm" | "lg";
+  /** Locale prefix for the home link, e.g. "fr" -> hrefs to /fr. */
+  lang?: string;
 }
 
 /**
  * Header lockup: crest emblem + the name in the display serif. Legible at a
  * glance and unmistakably on-brand.
  */
-export function Logo({ className, size = "sm" }: LogoProps) {
+export function Logo({ className, size = "sm", lang }: LogoProps) {
   const tall = size === "lg";
+  const isLang = lang !== undefined && /^[a-z]{2}$/.test(lang);
+  const homeHref = isLang ? `/${lang}` : "/";
   return (
     <Link
-      href="/"
+      href={homeHref}
       aria-label={`${BRAND_NAME} — home`}
       className={cn(
         "group inline-flex items-center gap-3.5 transition-opacity hover:opacity-90",

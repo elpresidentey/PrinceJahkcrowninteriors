@@ -5,14 +5,12 @@ import { BUSINESS_INFO, WHATSAPP_QUOTE_URL } from "@/lib/constants";
 import { IMAGES } from "@/lib/image-manifest";
 import { goldCta } from "@/components/ui/button";
 import { StudioStatusSlider } from "./studio-status-slider";
+import { getDictionaryFor } from "@/i18n";
+import { localePath } from "@/i18n/config";
+import type { Locale } from "@/i18n/config";
 
 interface HeroProps {
-  /** Small label above the headline. */
-  discipline?: string;
-  /** Supporting paragraph under the headline. */
-  intro?: string;
-  primaryCTA?: { text: string; href: string };
-  secondaryCTA?: { text: string; href: string };
+  lang: Locale;
 }
 
 const particles = [
@@ -26,12 +24,8 @@ const particles = [
   { left: "91%", top: "22%", size: "0.18rem", delay: "-7s", duration: "14s" },
 ];
 
-export function Hero({
-  discipline = "POP ceilings · Feature walls · Interiors",
-  intro = "Prince Jahknow Crown Interior Services designs and builds sculpted ceilings, feature walls and complete interiors across Lagos — drawn around your room, built and finished by hand.",
-  primaryCTA = { text: "Get a quote", href: WHATSAPP_QUOTE_URL },
-  secondaryCTA = { text: "See our work", href: "/projects" },
-}: HeroProps) {
+function HeroInner({ lang }: { lang: Locale }) {
+  const t = getDictionaryFor(lang);
   const feature = IMAGES["living-linear-cove"];
 
   return (
@@ -78,29 +72,29 @@ export function Hero({
         <div className="lg:col-span-7 xl:col-span-6">
           <div className="flex items-center gap-4 animate-fade-in">
             <span aria-hidden className="h-px w-10 bg-gold-bright" />
-            <p className="eyebrow text-gold-bright">{discipline}</p>
+            <p className="eyebrow text-gold-bright">{t.hero.discipline}</p>
           </div>
 
           <h1
             className="mt-6 max-w-4xl font-serif uppercase leading-[0.88] tracking-[-0.025em] text-primary-foreground animate-fade-in-up"
             style={{ fontSize: "clamp(3.25rem, 7.2vw, 7rem)" }}
           >
-            A finer finish
-            <br className="hidden sm:block" /> {" "}for every room
+            {t.hero.headline1}
+            <br className="hidden sm:block" /> {t.hero.headline2}
           </h1>
 
           <p className="mt-7 max-w-xl text-[1rem] leading-relaxed text-primary-foreground/72 animate-fade-in [animation-delay:120ms] md:text-[1.05rem]">
-            {intro}
+            {t.hero.intro}
           </p>
 
           <div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4 animate-fade-in-up [animation-delay:200ms]">
             <a
-              href={primaryCTA.href}
+              href={WHATSAPP_QUOTE_URL}
               target="_blank"
               rel="noreferrer noopener"
               className={goldCta}
             >
-              {primaryCTA.text}
+              {t.hero.quoteCta}
               <ArrowUpRight
                 className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                 strokeWidth={2}
@@ -108,24 +102,28 @@ export function Hero({
               />
             </a>
             <Link
-              href={secondaryCTA.href}
+              href={localePath(lang, "/projects")}
               className="link eyebrow text-primary-foreground/75 transition-colors hover:text-primary-foreground"
             >
-              {secondaryCTA.text} ↗
+              {t.hero.seeWork} ↗
             </Link>
           </div>
 
           <p className="eyebrow mt-11 text-primary-foreground/55 animate-fade-in [animation-delay:340ms]">
-            Lagos, Nigeria · {BUSINESS_INFO.areasServed.length} areas served
+            {t.hero.areas.replace("{n}", String(BUSINESS_INFO.areasServed.length))}
           </p>
         </div>
 
         <div className="hidden self-end justify-self-end pb-1 lg:col-span-5 lg:flex lg:items-center lg:gap-4 animate-fade-in [animation-delay:450ms]">
-          <span className="eyebrow text-primary-foreground/55">Scroll to explore</span>
+          <span className="eyebrow text-primary-foreground/55">{t.hero.scroll}</span>
           <ArrowDown className="size-4 text-gold-bright animate-bounce" aria-hidden />
         </div>
       </div>
-      <StudioStatusSlider />
+      <StudioStatusSlider aria={t.status} />
     </section>
   );
+}
+
+export function Hero({ lang }: HeroProps) {
+  return <HeroInner lang={lang} />;
 }

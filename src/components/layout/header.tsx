@@ -5,11 +5,35 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useScroll } from "@/hooks/use-scroll";
-import { NAV_LINKS, WHATSAPP_QUOTE_URL } from "@/lib/constants";
+import { WHATSAPP_QUOTE_URL } from "@/lib/constants";
 import { Logo } from "./logo";
 import { MobileMenu } from "./mobile-menu";
+import { LanguageSwitcher } from "./language-switcher";
+import type { Locale } from "@/i18n/config";
 
-export function Header() {
+/** Header chrome. Nav labels + language come from the [lang] layout, so the
+ *  component itself contains no copy — it stays purely presentational. */
+export interface HeaderProps {
+  lang: Locale;
+  links: { label: string; href: string }[];
+  menuLabel: string;
+  quoteLabel: string;
+  openMenuAria: string;
+  closeLabel: string;
+  closeMenuAria: string;
+  switcherLabel: string;
+}
+
+export function Header({
+  lang,
+  links,
+  menuLabel,
+  quoteLabel,
+  openMenuAria,
+  closeLabel,
+  closeMenuAria,
+  switcherLabel,
+}: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const scrolled = useScroll(12);
@@ -32,14 +56,16 @@ export function Header() {
         )}
       >
         <div className="mx-auto flex h-[4.75rem] w-full max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
-          <Logo />
+          <Logo lang={lang} />
 
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
-            {NAV_LINKS.map((link) => {
-              const active =
-                link.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(link.href);
+            {links.map((link) => {
+              // "/"-style hrefs and bare locale homes ("/fr") match exactly;
+              // section sections match by prefix.
+              const isHome = link.href.split("/").length <= 2;
+              const active = isHome
+                ? pathname === link.href
+                : pathname.startsWith(link.href);
               return (
                 <Link
                   key={link.href}
@@ -57,30 +83,45 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-4 sm:gap-5">
+            <LanguageSwitcher
+              current={lang}
+              label={switcherLabel}
+              className="hidden sm:flex"
+            />
             <a
               href={WHATSAPP_QUOTE_URL}
               target="_blank"
               rel="noreferrer noopener"
               className="eyebrow hidden bg-gold-bright px-5 py-3 text-ink transition-colors hover:bg-primary-foreground hover:text-primary sm:inline-block"
             >
-              Get a quote
+              {quoteLabel}
             </a>
             <button
               ref={menuButtonRef}
               type="button"
               onClick={() => setMenuOpen(true)}
-              aria-label="Open menu"
+              aria-label={openMenuAria}
               aria-expanded={menuOpen}
               className="eyebrow inline-flex items-center gap-2 text-primary-foreground lg:hidden"
             >
               <span aria-hidden className="h-px w-5 bg-gold-bright" />
-              Menu
+              {menuLabel}
             </button>
           </div>
         </div>
       </header>
 
-      <MobileMenu open={menuOpen} onClose={closeMenu} />
+      <MobileMenu
+        open={menuOpen}
+        onClose={closeMenu}
+        lang={lang}
+        links={links}
+        menuLabel={menuLabel}
+        quoteLabel={quoteLabel}
+        closeLabel={closeLabel}
+        closeMenuAria={closeMenuAria}
+        switcherLabel={switcherLabel}
+      />
     </>
   );
 }

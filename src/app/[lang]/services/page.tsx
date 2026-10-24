@@ -1,31 +1,46 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { WHATSAPP_QUOTE_URL } from "@/lib/constants";
 import { PageHero, Section, ProjectCard } from "@/components/shared";
 import { ProcessSteps, CTASection } from "@/components/sections";
 import { cn } from "@/lib/utils";
 import { getPublicServices } from "@/lib/services";
+import { getDictionaryFor, hasLocale } from "@/i18n";
+import { localePath } from "@/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Services",
-  description:
-    "POP ceilings, feature walls, lighting design, wall finishes and full interior decoration across Lagos.",
-};
+export async function generateMetadata({
+  params,
+}: PageProps<"/[lang]/services">): Promise<Metadata> {
+  const { lang } = await params;
+  if (!hasLocale(lang)) return {};
+  const t = getDictionaryFor(lang);
+  return {
+    title: t.servicesIndex.metaTitle,
+    description: t.servicesIndex.metaDescription,
+  };
+}
 
-export default async function ServicesPage() {
+export default async function ServicesPage({
+  params,
+}: PageProps<"/[lang]/services">) {
+  const { lang } = await params;
+  if (!hasLocale(lang)) notFound();
+  const t = getDictionaryFor(lang);
   const services = await getPublicServices();
+
   return (
     <>
       <PageHero
-        eyebrow="Services"
+        eyebrow={t.servicesIndex.eyebrow}
         title={
           <>
-            Finishing that
+            {t.servicesIndex.title1}
             <br />
-            earns the space
+            {t.servicesIndex.title2}
           </>
         }
-        subtitle="One team for the whole job — from sculpted ceilings and coves to the last coat of finish. Every service is quoted clearly and delivered on schedule."
+        subtitle={t.servicesIndex.subtitle}
       />
 
       <Section>
@@ -74,7 +89,7 @@ export default async function ServicesPage() {
                     rel="noreferrer noopener"
                     className="eyebrow mt-7 inline-flex items-center gap-2 text-foreground transition-colors hover:text-gold"
                   >
-                    Request this
+                    {t.servicesIndex.request}
                     <ArrowUpRight className="size-4" aria-hidden />
                   </a>
                 </div>
@@ -84,12 +99,14 @@ export default async function ServicesPage() {
         </div>
       </Section>
 
-      <ProcessSteps />
+      <ProcessSteps lang={lang} />
 
       <CTASection
-        title="Not sure which service you need?"
-        subtitle="Send a few photos of the space and we'll advise honestly — including what you don't need."
-        primaryCTA={{ text: "Ask an expert", href: "/contact" }}
+        eyebrow={t.cta.eyebrow}
+        title={t.servicesIndex.ctaTitle}
+        subtitle={t.servicesIndex.ctaSubtitle}
+        primaryCTA={{ text: t.servicesIndex.ctaButton, href: localePath(lang, "/contact") }}
+        whatsappLabel={t.cta.chatWhatsApp}
       />
     </>
   );

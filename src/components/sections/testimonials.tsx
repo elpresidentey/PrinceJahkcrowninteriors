@@ -2,14 +2,20 @@ import { Star } from "lucide-react";
 import { Section } from "@/components/shared/section";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { TESTIMONIALS } from "@/lib/content";
+import { getDictionaryFor } from "@/i18n";
+import type { Locale } from "@/i18n/config";
 
-export function Testimonials() {
+/** People write their own names and quotes in the dashboard — those stay as
+ *  entered. Only the section chrome is translated. */
+export function Testimonials({ lang }: { lang: Locale }) {
+  const t = getDictionaryFor(lang);
+
   return (
     <Section background="secondary">
       <SectionHeading
-        eyebrow="Kind words"
-        title="Trusted by homeowners across Lagos"
-        subtitle="Real feedback from clients whose spaces we have finished."
+        eyebrow={t.testimonials.eyebrow}
+        title={t.testimonials.title}
+        subtitle={t.testimonials.subtitle}
       />
 
       <div className="mt-12 grid gap-x-16 gap-y-10 md:grid-cols-3">
@@ -27,7 +33,7 @@ export function Testimonials() {
             <figcaption className="mt-auto space-y-3">
               <div
                 role="img"
-                aria-label={`Rated ${testimonial.rating} out of 5`}
+                aria-label={t.testimonials.rated.replace("{rating}", String(testimonial.rating))}
                 className="flex gap-1 text-gold-bright"
               >
                 {Array.from({ length: testimonial.rating }).map((_, index) => (

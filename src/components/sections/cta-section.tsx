@@ -8,18 +8,26 @@ import { goldCta } from "@/components/ui/button";
 import { WHATSAPP_QUOTE_URL } from "@/lib/constants";
 
 interface CTASectionProps {
-  title?: string;
-  subtitle?: string;
-  primaryCTA?: { text: string; href: string };
+  /** Small gold kicker above the headline ("Start a conversation"). */
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  /** Gold button first; href may be external (WhatsApp) or internal. */
+  primaryCTA: { text: string; href: string };
+  /** Line shown under the primary CTA linking straight into chat. */
+  whatsappLabel: string;
+  /** Fallback link when the WhatsApp line is hidden. */
   secondaryCTA?: { text: string; href: string };
   showWhatsApp?: boolean;
 }
 
 export function CTASection({
-  title = "Ready to transform your space?",
-  subtitle = "Tell us about the room — we'll come back with honest advice and a clear, itemised quote within a week.",
-  primaryCTA = { text: "Get a quote", href: WHATSAPP_QUOTE_URL },
-  secondaryCTA = { text: "View projects", href: "/projects" },
+  eyebrow,
+  title,
+  subtitle,
+  primaryCTA,
+  whatsappLabel,
+  secondaryCTA,
   showWhatsApp = true,
 }: CTASectionProps) {
   const primaryIsExternal = /^(https?:|mailto:|tel:)/.test(primaryCTA.href);
@@ -39,7 +47,7 @@ export function CTASection({
           <div className="md:col-span-8 lg:col-span-7">
             <span className="eyebrow flex items-center gap-3 text-gold-bright">
               <span aria-hidden className="h-px w-9 bg-gold-bright" />
-              Start a conversation
+              {eyebrow}
             </span>
             <h2 className="mt-6 max-w-3xl font-serif text-[2.55rem] leading-[0.96] tracking-tight text-primary-foreground sm:text-[3.6rem] md:text-[4.5rem]">
               {title}
@@ -74,15 +82,17 @@ export function CTASection({
                 className="eyebrow inline-flex items-center gap-2 text-primary-foreground/65 transition-colors hover:text-primary-foreground"
               >
                 <MessageCircle className="size-4 text-gold-bright" aria-hidden />
-                Chat on WhatsApp
+                {whatsappLabel}
               </a>
             ) : (
-              <Link
-                href={secondaryCTA.href}
-                className="link eyebrow text-primary-foreground/65 transition-colors hover:text-primary-foreground"
-              >
-                {secondaryCTA.text}
-              </Link>
+              secondaryCTA && (
+                <Link
+                  href={secondaryCTA.href}
+                  className="link eyebrow text-primary-foreground/65 transition-colors hover:text-primary-foreground"
+                >
+                  {secondaryCTA.text}
+                </Link>
+              )
             )}
           </div>
         </div>

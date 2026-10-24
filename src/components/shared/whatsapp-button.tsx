@@ -9,6 +9,8 @@ interface WhatsAppButtonProps {
   message?: string;
   fixed?: boolean;
   className?: string;
+  /** Accessible name for the floating button ("Chat on WhatsApp"). */
+  ariaLabel?: string;
 }
 
 export function WhatsAppButton({
@@ -16,6 +18,7 @@ export function WhatsAppButton({
   message = "Hello, I'd like to inquire about your services",
   fixed = false,
   className,
+  ariaLabel = "Chat on WhatsApp",
 }: WhatsAppButtonProps) {
   const chatUrl = whatsappUrl(phoneNumber, message);
   const handleClick = () => {
@@ -30,7 +33,7 @@ export function WhatsAppButton({
           "fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full border border-gold-bright bg-primary text-gold-bright shadow-[0_12px_28px_rgba(9,37,22,0.3)] transition-all duration-300 hover:scale-105 hover:bg-gold-bright hover:text-ink",
           className
         )}
-        aria-label="Chat on WhatsApp"
+        aria-label={ariaLabel}
       >
         <svg viewBox="0 0 24 24" className="h-7 w-7 fill-current" aria-hidden>
           <path d={WHATSAPP_PATH} />
@@ -50,7 +53,7 @@ export function WhatsAppButton({
       <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden>
         <path d={WHATSAPP_PATH} />
       </svg>
-      Chat on WhatsApp
+      {ariaLabel}
     </button>
   );
 }

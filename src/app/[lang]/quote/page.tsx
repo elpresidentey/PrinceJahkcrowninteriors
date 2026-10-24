@@ -1,48 +1,45 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { PageHero, Section, SectionHeading, FaqList } from "@/components/shared";
 import { EnquiryForm } from "@/components/forms/enquiry-form";
 import { FAQS } from "@/lib/content";
+import { getDictionaryFor, hasLocale } from "@/i18n";
 
-export const metadata: Metadata = {
-  title: "Get a quote",
-  description:
-    "Request a free, itemised POP ceiling or interior decoration quote from Prince Jahknow Crown Interior Services. Clear pricing within a week.",
-};
+export async function generateMetadata({
+  params,
+}: PageProps<"/[lang]/quote">): Promise<Metadata> {
+  const { lang } = await params;
+  if (!hasLocale(lang)) return {};
+  const t = getDictionaryFor(lang);
+  return {
+    title: t.quote.metaTitle,
+    description: t.quote.metaDescription,
+  };
+}
 
-const steps = [
-  {
-    title: "Tell us about the space",
-    description: "Share your location, room sizes and the look you're after.",
-  },
-  {
-    title: "Free site visit",
-    description: "We measure, check the ceiling condition and talk through options.",
-  },
-  {
-    title: "Itemised quote",
-    description: "A clear breakdown — materials, labour and lighting — within a week.",
-  },
-  {
-    title: "Scheduled start",
-    description: "Approve the quote and we lock in a start date that suits you.",
-  },
-];
+export default async function QuotePage({ params }: PageProps<"/[lang]/quote">) {
+  const { lang } = await params;
+  if (!hasLocale(lang)) notFound();
+  const t = getDictionaryFor(lang);
 
-export default function QuotePage() {
   return (
     <>
       <PageHero
-        eyebrow="Free quote"
-        title="A quote you can plan around"
-        subtitle="No vague estimates, no hidden extras. Tell us about your project and we'll send a clear, itemised quote within a week."
+        eyebrow={t.quote.eyebrow}
+        title={t.quote.title}
+        subtitle={t.quote.subtitle}
       />
 
       <Section>
         <div className="grid gap-14 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-5">
-            <SectionHeading eyebrow="What happens next" title="Four simple steps" className="mb-8" />
+            <SectionHeading
+              eyebrow={t.quote.stepsEyebrow}
+              title={t.quote.stepsTitle}
+              className="mb-8"
+            />
             <ol className="border-t border-border">
-              {steps.map((step, index) => (
+              {t.quote.steps.map((step, index) => (
                 <li
                   key={step.title}
                   className="flex gap-6 border-b border-border py-6"
@@ -60,22 +57,21 @@ export default function QuotePage() {
               ))}
             </ol>
             <p className="mt-8 text-[0.85rem] leading-relaxed text-muted-foreground">
-              A quote is just information. Take your time, compare it, ask us
-              anything — there&apos;s no obligation and no pressure.
+              {t.quote.noPressure}
             </p>
           </div>
 
           <div className="lg:col-span-7">
-            <EnquiryForm variant="quote" />
+            <EnquiryForm variant="quote" strings={t.form} />
           </div>
         </div>
       </Section>
 
       <Section background="secondary">
         <SectionHeading
-          eyebrow="Details"
-          title="Before you send"
-          subtitle="The questions we get asked most about pricing and process."
+          eyebrow={t.quote.faqEyebrow}
+          title={t.quote.faqTitle}
+          subtitle={t.quote.faqSubtitle}
         />
         <div className="mt-12 max-w-3xl">
           <FaqList items={FAQS} />
