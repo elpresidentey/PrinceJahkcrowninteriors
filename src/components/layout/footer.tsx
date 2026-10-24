@@ -20,10 +20,11 @@ interface FooterProps {
  * as the artwork was drawn, with nothing sliced off.
  */
 function BrandCrest({ lang, tagline }: { lang: Locale; tagline: string }) {
+  const t = getDictionaryFor(lang);
   return (
     <Link
       href={localePath(lang)}
-      aria-label={`${BRAND_NAME} — home`}
+      aria-label={t.footer.homeAria.replace("{brand}", BRAND_NAME)}
       className="group inline-block transition-opacity hover:opacity-90"
     >
       <Image
@@ -78,7 +79,7 @@ export function Footer({ lang }: FooterProps) {
         <div className="grid gap-x-10 gap-y-12 py-14 md:grid-cols-2 md:gap-y-14 lg:grid-cols-12 lg:py-16">
           {/* Brand, quote panel, socials */}
           <div className="lg:col-span-4">
-            <BrandCrest lang={lang} tagline={BUSINESS_INFO.tagline} />
+            <BrandCrest lang={lang} tagline={t.intro.tagline} />
 
             <div className="mt-8 bg-gold p-6 text-ink">
               <p className="font-serif text-xl leading-snug">
