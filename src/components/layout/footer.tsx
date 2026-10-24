@@ -233,7 +233,7 @@ export function Footer({ lang }: FooterProps) {
               <span className="text-gold-bright">
                 {BUSINESS_INFO.name.split(" ").slice(0, 3).join(" ")}
               </span>{" "}
-              · Lagos, Nigeria
+              · {t.footer.origin}
             </p>
             <p className="eyebrow text-primary-foreground/55">
               {t.footer.regLine.replace("{reg}", BUSINESS_INFO.regNo)}

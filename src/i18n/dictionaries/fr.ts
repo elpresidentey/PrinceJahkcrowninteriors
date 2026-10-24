@@ -289,6 +289,7 @@ export const fr: Dictionary = {
     hours: "Lun – Sam, 8h – 18h",
     regLine: "N° d'enreg. BN {reg} · CAC, Nigeria",
     serving: "Au service de Lagos et au-delà",
+    origin: "Lagos, Nigeria",
     homeAria: "{brand} — accueil",
   },
 

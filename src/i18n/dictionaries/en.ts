@@ -314,6 +314,7 @@ export const en = {
     hours: "Mon – Sat, 8am – 6pm",
     regLine: "BN Reg. No. {reg} · CAC, Nigeria",
     serving: "Serving Lagos & beyond",
+    origin: "Lagos, Nigeria",
     homeAria: "{brand} — home",
   },
 
