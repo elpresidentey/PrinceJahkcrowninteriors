@@ -161,7 +161,12 @@ export function MobileMenu({
             WhatsApp · {BUSINESS_INFO.phone}
           </a>
           <div className="pt-2 text-center">
-            <LanguageSwitcher current={lang} label={switcherLabel} className="justify-center" />
+            <LanguageSwitcher
+              current={lang}
+              label={switcherLabel}
+              className="justify-center"
+              placement="top"
+            />
           </div>
         </div>
       </nav>
