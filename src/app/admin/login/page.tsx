@@ -11,7 +11,12 @@ import { LoginForm } from "./login-form";
 export const metadata: Metadata = { title: "Admin sign in" };
 
 // The session check reads cookies, so this route must never prerender.
+// `instant = false` allows blocking navigations; `ensureStatic = false`
+// additionally opts the route out of the partial-prerender stages that
+// otherwise fail prerender (and were observed to break the second form
+// submit after a returned error state).
 export const instant = false;
+export const ensureStatic = false;
 
 export default async function AdminLoginPage() {
   if (await isAdmin()) redirect("/admin");

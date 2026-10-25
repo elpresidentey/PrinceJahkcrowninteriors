@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath, updateTag } from "next/cache";
-import { headers } from "next/headers";
+
 import { redirect } from "next/navigation";
 
 import {
@@ -9,7 +9,6 @@ import {
   createAdminSession,
   destroyAdminSession,
   isAdmin,
-  verifyAdminCredentials,
 } from "@/lib/admin-auth";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import {
@@ -40,76 +39,9 @@ const MAX_GALLERY_PER_REQUEST = 8;
 /* Auth                                                                */
 /* ------------------------------------------------------------------ */
 
-/*
- * Login brute-force throttle. When ADMIN_PASSWORD is short (as token-entered
- * passwords can be), an attacker could otherwise guess indefinitely. Failed
- * attempts are counted per IP in a small in-memory window; once the cap is
- * reached the IP is locked out for the remainder of that window. Serverless
- * instances reset the map on cold start, which is acceptable — several warm
- * regions each enforcing the cap still raise the guessing cost dramatically.
- */
-const LOGIN_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
-const LOGIN_MAX_ATTEMPTS = 5;
-const LOGIN_THROTTLE_MAX_IPS = 10_000;
-
-const loginAttempts = new Map<string, number[]>(); // ip -> failed-attempt timestamps
-
-async function loginThrottleClient(): Promise<string> {
-  // Vercel proxies set x-forwarded-for; take the first hop they recorded.
-  const hop = (await headers()).get("x-forwarded-for") ?? "";
-  return hop.split(",")[0]?.trim() || "unknown";
-}
-
-function loginThrottleGate(ip: string): { allowed: boolean } {
-  const now = Date.now();
-  const attempts = (loginAttempts.get(ip) ?? []).filter(
-    (t) => now - t < LOGIN_WINDOW_MS
-  );
-
-  if (attempts.length >= LOGIN_MAX_ATTEMPTS) {
-    loginAttempts.set(ip, attempts);
-    return { allowed: false };
-  }
-
-  attempts.push(now);
-  loginAttempts.set(ip, attempts);
-  if (loginAttempts.size > LOGIN_THROTTLE_MAX_IPS) {
-    // Bound memory: beyond the cap, restart the ledger for everyone.
-    loginAttempts.clear();
-  }
-  return { allowed: true };
-}
-
-export async function loginAction(
-  _prev: AdminActionState,
-  formData: FormData
-): Promise<AdminActionState> {
-  const username = String(formData.get("username") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-
-  if (!adminConfigured()) {
-    return {
-      error:
-        "No admin password is set on the server yet. Add ADMIN_PASSWORD to .env.local and restart the dev server.",
-    };
-  }
-
-  const ip = await loginThrottleClient();
-  if (!loginThrottleGate(ip).allowed) {
-    return {
-      error:
-        "Too many failed attempts from this network. Wait 15 minutes and try again.",
-    };
-  }
-
-  const ok = verifyAdminCredentials(username, password);
-  if (!ok) {
-    return { error: "That username or password is not right. Try again." };
-  }
-
-  await createAdminSession();
-  redirect("/admin");
-}
+/* Login moved to POST /api/admin/login (a plain route handler) — see the
+ * comment there. The server-action path was prone to a Next 16 form
+ * regression where a retry after a failed submit never reached the server. */
 
 export async function logoutAction(): Promise<void> {
   await destroyAdminSession();

@@ -27,6 +27,48 @@ function expectedExp(): number {
   return Math.floor(Date.now() / 1000) + SESSION_MAX_AGE;
 }
 
+/*
+ * Login brute-force throttle (shared by the /api/admin/login route). Failed
+ * attempts are counted per IP in a small in-memory window; once the cap is
+ * reached the IP is locked out for the remainder of that window. Verified
+ * locally: 5 failures lock the caller out for 15 minutes.
+ *
+ * Serverless instances reset the map on cold start, which is acceptable —
+ * each warm instance enforces the cap, and the lockout stacks with a strong
+ * ADMIN_PASSWORD and (recommended) a Vercel firewall rate-limit rule.
+ */
+const LOGIN_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+const LOGIN_MAX_ATTEMPTS = 5;
+const LOGIN_THROTTLE_MAX_IPS = 10_000;
+
+const loginAttempts = new Map<string, number[]>(); // ip -> failed-attempt timestamps
+
+export function loginClientIpForwarded(forwarded: string | null): string {
+  const hop = forwarded ?? "";
+  return hop.split(",")[0]?.trim() || "unknown";
+}
+
+/** Records a failed attempt and returns false once the IP is locked out. */
+export function loginThrottleGate(ip: string): boolean {
+  const now = Date.now();
+  const attempts = (loginAttempts.get(ip) ?? []).filter(
+    (t) => now - t < LOGIN_WINDOW_MS
+  );
+
+  if (attempts.length >= LOGIN_MAX_ATTEMPTS) {
+    loginAttempts.set(ip, attempts);
+    return false;
+  }
+
+  attempts.push(now);
+  loginAttempts.set(ip, attempts);
+  if (loginAttempts.size > LOGIN_THROTTLE_MAX_IPS) {
+    // Bound memory: beyond the cap, restart the ledger for everyone.
+    loginAttempts.clear();
+  }
+  return true;
+}
+
 /**
  * Token for a NEW session, including its expiry. Null when no admin password
  * is configured (the login flow refuses to run in that case anyway).
