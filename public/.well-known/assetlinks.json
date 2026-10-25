@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.pjcinteriors.app",
+        "sha256_cert_fingerprints": ["48:38:BA:74:04:B5:8C:74:E2:21:7E:7C:7B:C7:63:23:4E:EA:47:7C:5E:EA:FA:2D:E4:E5:27:99:7A:34:A8:91"]
+      }
+    }]
