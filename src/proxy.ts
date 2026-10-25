@@ -28,8 +28,9 @@ export const config = {
      * Run on everything except:
      * - Next internals and API/admin/server-action paths
      * - metadata and PWA artifacts (manifest, service worker, robots, sitemap)
+     * - the standalone /privacy and /offline shells (locale-free by design)
      * - media files (images, icons, fonts) that carry an extension
      */
-    "/((?!_next|api|admin|offline|manifest\\.webmanifest|sw\\.js|robots\\.txt|sitemap\\.xml|.*\\..*).*)",
+    "/((?!_next|api|admin|offline|privacy|manifest\\.webmanifest|sw\\.js|robots\\.txt|sitemap\\.xml|.*\\..*).*)",
   ],
 };
