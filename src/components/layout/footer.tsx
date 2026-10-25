@@ -242,6 +242,11 @@ export function Footer({ lang }: FooterProps) {
             <p className="eyebrow text-primary-foreground/55">
               {t.footer.serving}
             </p>
+            <p className="eyebrow text-primary-foreground/55">
+              <Link href="/privacy" className="transition-opacity hover:opacity-80">
+                Privacy Policy
+              </Link>
+            </p>
           </div>
         </Container>
       </div>
