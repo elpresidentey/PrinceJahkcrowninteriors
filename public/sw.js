@@ -2,14 +2,16 @@
  *
  * Strategy per request type:
  *   - Navigations  → network-first, fall back to a cached page, then /offline
- *   - Next assets  → stale-while-revalidate (immutable, hashed filenames)
+ *   - Next assets  → network-first, fall back to cache (hashed filenames are
+ *                    immutable, so HTTP cache headers already do the caching;
+ *                    network-first prevents a once-per-deploy stale render)
  *   - Static media → stale-while-revalidate
  *   - Everything else (RSC payloads, /api, cross-origin, non-GET) → untouched
  *
  * Bump VERSION to invalidate every cache on the next deploy.
  */
 
-const VERSION = "v3";
+const VERSION = "v4";
 const PRECACHE = `pjc-precache-${VERSION}`;
 const RUNTIME = `pjc-runtime-${VERSION}`;
 
@@ -56,25 +58,25 @@ self.addEventListener("message", (event) => {
   if (event.data === "SKIP_WAITING") self.skipWaiting();
 });
 
-function isCacheableAsset(url) {
-  return (
-    url.pathname.startsWith("/_next/static/") ||
-    /\.(?:css|js|mjs|png|jpe?g|gif|svg|webp|avif|ico|woff2?|ttf)$/i.test(url.pathname)
-  );
+function isCacheableMedia(url) {
+  // Only images/fonts — these are stable between deploys, so a slightly
+  // older copy is harmless. Code assets (_next/static/*, *.js) must be
+  // network-first so a deploy can never serve mismatched chunks once.
+  return /\.(?:png|jpe?g|gif|svg|webp|avif|ico|woff2?|ttf)$/i.test(url.pathname);
 }
 
-async function staleWhileRevalidate(request) {
-  const cache = await caches.open(RUNTIME);
-  const cached = await cache.match(request);
-  const network = fetch(request)
-    .then((response) => {
-      if (response && response.status === 200 && response.type === "basic") {
-        cache.put(request, response.clone());
-      }
-      return response;
-    })
-    .catch(() => undefined);
-  return cached || (await network) || Response.error();
+async function fetchThenCache(request) {
+  try {
+    const response = await fetch(request);
+    const cache = await caches.open(RUNTIME);
+    if (response && response.status === 200 && response.type === "basic") {
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cache = await caches.open(RUNTIME);
+    return (await cache.match(request)) || Response.error();
+  }
 }
 
 async function handleNavigation(request) {
@@ -133,7 +135,17 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (isCacheableAsset(url)) {
+  if (isCacheableMedia(url)) {
     event.respondWith(staleWhileRevalidate(request));
+    return;
+  }
+
+  // Code assets (/_next/static/*, css, js): network-first with cache as the
+  // offline fallback — a deploying site never hydrates with stale code.
+  if (
+    url.pathname.startsWith("/_next/static/") ||
+    /\.(?:css|js|mjs)$/i.test(url.pathname)
+  ) {
+    event.respondWith(fetchThenCache(request));
   }
 });
