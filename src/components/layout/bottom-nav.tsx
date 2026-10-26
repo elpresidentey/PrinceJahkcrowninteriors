@@ -65,7 +65,7 @@ export function BottomNav({ items, ariaLabel }: BottomNavProps) {
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   className={
-                    "flex min-h-16 flex-1 flex-col items-center justify-center gap-1 px-1 py-2 text-[0.6rem] font-semibold uppercase tracking-wide transition-colors " +
+                    "flex min-h-16 flex-1 flex-col items-center justify-center gap-1.5 px-0.5 py-2 text-[0.68rem] font-medium leading-none transition-colors " +
                     (item.accent
                       ? "text-gold-bright"
                       : active
