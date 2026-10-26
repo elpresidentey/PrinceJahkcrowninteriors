@@ -9,6 +9,7 @@ import {
   Header,
   Footer,
   IntroSplash,
+  BottomNav,
 } from "@/components/layout";
 import { InstallPrompt, OfflineBanner, ServiceWorkerRegister } from "@/components/pwa";
 import { WhatsAppButton } from "@/components/shared";
@@ -137,6 +138,23 @@ export default async function LangRootLayout({
         />
         <main className="flex-1">{children}</main>
         <Footer lang={lang} />
+
+        {/* Phone-style tab bar (mobile only, lives inside the store apps). */}
+        <BottomNav
+          ariaLabel="Primary"
+          items={[
+            { href: links[0].href, label: links[0].label, icon: "home" },
+            { href: links[2].href, label: links[2].label, icon: "services" },
+            { href: links[1].href, label: links[1].label, icon: "projects" },
+            {
+              href: localePath(lang, "/quote"),
+              label: t.nav.getQuote,
+              icon: "quote",
+              accent: true,
+            },
+            { href: links[4].href, label: links[4].label, icon: "contact" },
+          ]}
+        />
 
         <WhatsAppButton
           fixed

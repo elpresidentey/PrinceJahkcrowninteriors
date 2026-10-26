@@ -30,7 +30,7 @@ export function WhatsAppButton({
       <button
         onClick={handleClick}
         className={cn(
-          "fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full border border-gold-bright bg-primary text-gold-bright shadow-[0_12px_28px_rgba(9,37,22,0.3)] transition-all duration-300 hover:scale-105 hover:bg-gold-bright hover:text-ink",
+          "fixed bottom-[5.5rem] right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full border border-gold-bright bg-primary text-gold-bright shadow-[0_12px_28px_rgba(9,37,22,0.3)] transition-all duration-300 hover:scale-105 hover:bg-gold-bright hover:text-ink md:bottom-5 md:right-5",
           className
         )}
         aria-label={ariaLabel}
